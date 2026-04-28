@@ -3,22 +3,26 @@ import { Pause, Play, ArrowRight, Users } from 'lucide-react';
 import type { QueueStatusResult, Token } from '../store/api';
 
 interface QueueCardProps {
+  queueId: string;
   name: string;
   status: QueueStatusResult | null;
   currentToken: Token | null;
-  onNext: () => void;
-  onPause: () => void;
-  onResume: () => void;
+  onNext: (e: React.MouseEvent) => void;
+  onPause: (e: React.MouseEvent) => void;
+  onResume: (e: React.MouseEvent) => void;
+  onCardClick?: () => void;
   isLoading: boolean;
 }
 
 export function QueueCard({
+  queueId,
   name,
   status,
   currentToken,
   onNext,
   onPause,
   onResume,
+  onCardClick,
   isLoading,
 }: QueueCardProps) {
   const isPaused = status?.status === 'paused';
@@ -27,10 +31,14 @@ export function QueueCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden"
+      className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden cursor-pointer"
+      onClick={onCardClick}
     >
       <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{name}</h3>
+        <div>
+          <h3 className="text-lg font-semibold">{name}</h3>
+          <p className="text-xs text-slate-400 font-mono">{queueId.slice(0, 8)}...</p>
+        </div>
         <span
           className={`px-3 py-1 rounded-full text-sm ${
             isPaused ? 'bg-amber-500' : 'bg-green-500'
@@ -41,7 +49,7 @@ export function QueueCard({
       </div>
 
       <div className="p-6">
-        {currentToken ? (
+        {currentToken && Object.keys(currentToken).length > 0 ? (
           <div className="text-center mb-6">
             <p className="text-slate-500 text-sm mb-2">Now Serving</p>
             <div className="text-5xl font-bold text-slate-900">{currentToken.position}</div>
@@ -80,7 +88,10 @@ export function QueueCard({
           </motion.button>
 
           <motion.button
-            onClick={isPaused ? onResume : onPause}
+            onClick={(e) => {
+              e.stopPropagation();
+              isPaused ? onResume(e) : onPause(e);
+            }}
             disabled={isLoading}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

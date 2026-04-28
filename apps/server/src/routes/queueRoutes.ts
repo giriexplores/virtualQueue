@@ -5,6 +5,7 @@ import {
   listQueuesHandler,
   joinQueueHandler,
   getQueueStatusHandler,
+  getQueueTokensHandler,
   nextTokenHandler,
   skipTokenHandler,
   pauseQueueHandler,
@@ -18,6 +19,7 @@ const router = Router();
 export default function queueRoutes(io: Server) {
   router.post('/', validate(createQueueSchema), createQueueHandler);
   router.get('/', listQueuesHandler);
+  router.get('/:id/tokens', getQueueTokensHandler);
   router.post('/:id/join', validate(joinQueueSchema), joinQueueHandler);
   router.get('/:id/status', getQueueStatusHandler);
   router.post('/:id/next', nextTokenHandler);

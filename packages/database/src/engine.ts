@@ -15,6 +15,36 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+export async function getQueueTokens(queueId: string): Promise<Token[]> {
+  const tokenIds = await redis.lrange(REDIS_KEYS.queueTokens(queueId), 0, -1);
+  if (!tokenIds || tokenIds.length === 0) return [];
+
+  const tokens: Token[] = [];
+  for (const tokenId of tokenIds) {
+    const token = await getToken(tokenId);
+    if (token) {
+      tokens.push(token);
+    }
+  }
+  return tokens;
+}
+
+export async function getAllQueues(): Promise<Queue[]> {
+  const queueIds = await redis.smembers(REDIS_KEYS.allQueues);
+  if (!queueIds || queueIds.length === 0) return [];
+
+  const queues: Queue[] = [];
+  for (const queueId of queueIds) {
+    const meta = await getQueueMeta(queueId);
+    if (meta) {
+      queues.push(toQueue(meta));
+    } else {
+      await redis.srem(REDIS_KEYS.allQueues, queueId);
+    }
+  }
+  return queues;
+}
+
 export async function createQueue(input: CreateQueueInput): Promise<Queue> {
   const id = generateId();
   const now = Date.now();
@@ -33,6 +63,7 @@ export async function createQueue(input: CreateQueueInput): Promise<Queue> {
   };
 
   await redis.hset(REDIS_KEYS.queueMeta(id), toHash(meta));
+  await redis.sadd(REDIS_KEYS.allQueues, id);
 
   return toQueue(meta);
 }

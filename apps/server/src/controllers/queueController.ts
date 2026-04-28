@@ -1,8 +1,10 @@
 import type { Request, Response } from 'express';
 import {
   createQueue,
+  getAllQueues,
   joinQueue,
   getQueueStatus,
+  getQueueTokens,
   nextToken,
   skipToken,
   pauseQueue,
@@ -31,7 +33,8 @@ export async function createQueueHandler(req: Request, res: Response): Promise<v
 }
 
 export async function listQueuesHandler(_req: Request, res: Response): Promise<void> {
-  res.json({ message: 'List queues not fully implemented - add getAllQueues to database' });
+  const queues = await getAllQueues();
+  res.json(queues);
 }
 
 export async function joinQueueHandler(req: Request, res: Response): Promise<void> {
@@ -101,4 +104,10 @@ export async function resumeQueueHandler(req: Request, res: Response): Promise<v
   const queue = await resumeQueue(id);
   emitQueueResumed(id);
   res.json(queue);
+}
+
+export async function getQueueTokensHandler(req: Request, res: Response): Promise<void> {
+  const id = getIdParam(req.params);
+  const tokens = await getQueueTokens(id);
+  res.json(tokens);
 }

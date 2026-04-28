@@ -1,32 +1,38 @@
 import { create } from 'zustand';
-import type { Token, QueueStatusResult } from './api';
+import type { Queue, Token, QueueStatusResult } from './api';
 
 interface AdminState {
-  queues: Array<{ id: string; name: string }>;
-  selectedQueue: string | null;
-  currentToken: Token | null;
-  queueStatus: QueueStatusResult | null;
+  queues: Queue[];
+  selectedQueueId: string | null;
+  queueStatuses: Record<string, QueueStatusResult>;
+  currentTokens: Record<string, Token | null>;
+  tokens: Token[];
   isLoading: boolean;
   error: string | null;
-  setQueues: (queues: Array<{ id: string; name: string }>) => void;
-  setSelectedQueue: (id: string | null) => void;
-  setCurrentToken: (token: Token | null) => void;
-  setQueueStatus: (status: QueueStatusResult | null) => void;
+  setQueues: (queues: Queue[]) => void;
+  setSelectedQueueId: (id: string | null) => void;
+  setQueueStatus: (queueId: string, status: QueueStatusResult) => void;
+  setCurrentToken: (queueId: string, token: Token | null) => void;
+  setTokens: (tokens: Token[]) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
 export const useAdminStore = create<AdminState>((set) => ({
   queues: [],
-  selectedQueue: null,
-  currentToken: null,
-  queueStatus: null,
+  selectedQueueId: null,
+  queueStatuses: {},
+  currentTokens: {},
+  tokens: [],
   isLoading: false,
   error: null,
   setQueues: (queues) => set({ queues }),
-  setSelectedQueue: (selectedQueue) => set({ selectedQueue }),
-  setCurrentToken: (currentToken) => set({ currentToken }),
-  setQueueStatus: (queueStatus) => set({ queueStatus }),
+  setSelectedQueueId: (selectedQueueId) => set({ selectedQueueId }),
+  setQueueStatus: (queueId, status) =>
+    set((state) => ({ queueStatuses: { ...state.queueStatuses, [queueId]: status } })),
+  setCurrentToken: (queueId, token) =>
+    set((state) => ({ currentTokens: { ...state.currentTokens, [queueId]: token } })),
+  setTokens: (tokens) => set({ tokens }),
   setIsLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
 }));

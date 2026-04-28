@@ -15,6 +15,16 @@ export interface CreateQueueInput {
   avgServiceTime?: number;
 }
 
+export interface Queue {
+  id: string;
+  name: string;
+  status: string;
+  maxSize: number;
+  avgServiceTime: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface QueueStatusResult {
   id: string;
   name: string;
@@ -34,8 +44,10 @@ export interface Token {
 }
 
 export const adminApi = {
-  createQueue: (data: CreateQueueInput) => api.post('/queues', data),
+  createQueue: (data: CreateQueueInput) => api.post<Queue>('/queues', data),
+  getAllQueues: () => api.get<Queue[]>('/queues'),
   getStatus: (queueId: string) => api.get<QueueStatusResult>(`/queues/${queueId}/status`),
+  getTokens: (queueId: string) => api.get<Token[]>(`/queues/${queueId}/tokens`),
   joinQueue: (queueId: string, data: { name: string }) =>
     api.post<Token>(`/queues/${queueId}/join`, data),
   nextToken: (queueId: string) => api.post<Token>(`/queues/${queueId}/next`),

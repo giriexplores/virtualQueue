@@ -1,8 +1,8 @@
-import Redis from 'ioredis';
+import {Redis, RedisOptions} from 'ioredis';
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
-const redisOptions: Redis.RedisOptions = {
+const redisOptions: RedisOptions = {
   maxRetriesPerRequest: 3,
   retryStrategy: (times: number) => {
     if (times > 3) {

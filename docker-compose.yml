@@ -18,8 +18,8 @@ services:
 
   server:
     build:
-      context: ./apps/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/server/Dockerfile
     container_name: virtualqueue-server
     ports:
       - "3001:3001"
@@ -38,8 +38,8 @@ services:
 
   admin:
     build:
-      context: ./apps/admin
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/admin/Dockerfile
     container_name: virtualqueue-admin
     ports:
       - "5173:5173"
@@ -53,8 +53,8 @@ services:
 
   client:
     build:
-      context: ./apps/client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/client/Dockerfile
     container_name: virtualqueue-client
     ports:
       - "5174:5174"

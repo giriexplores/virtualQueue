@@ -17,6 +17,17 @@ export interface CreateQueueInput {
 
 export interface JoinQueueInput {
   name: string;
+  contact?: string;
+}
+
+export interface Queue {
+  id: string;
+  name: string;
+  status: string;
+  maxSize: number;
+  avgServiceTime: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface QueueStatusResult {
@@ -41,6 +52,7 @@ export interface Token {
 
 export const queueApi = {
   create: (data: CreateQueueInput) => api.post('/queues', data),
+  getAllQueues: () => api.get<Queue[]>('/queues'),
   getStatus: (queueId: string, tokenId?: string) =>
     api.get<QueueStatusResult>(`/queues/${queueId}/status`, {
       params: tokenId ? { tokenId } : undefined,
