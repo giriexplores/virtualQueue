@@ -1,159 +1,157 @@
-# Turborepo starter
+# VirtualQueue
 
-This Turborepo starter is maintained by the Turborepo core team.
+VirtualQueue is a **real-time, Redis-powered virtual queue management system** built as a **Turborepo monorepo**. It includes separate applications for admins, clients, and the backend server, all orchestrated using Docker for seamless development and deployment.
 
-## Using this example
+The system enables fair, transparent, and real-time queue handling for services like clinics, events, counters, and more.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## Architecture Overview
+
+This project is structured as a **monorepo using Turborepo**, containing three main apps:
+
+### Apps
+
+* **admin** - Dashboard for managing the queue (call next, remove users, monitor flow)
+* **client** - Interface for users to join and track their queue position
+* **server** - Backend API + queue logic powered by Redis
+
+### Core Infrastructure
+
+* **Redis** - Used as the primary in-memory queue store
+* **Docker + Docker Compose** - For local development and container orchestration
+* **Turborepo** - Monorepo build system for optimized workflows
+
+---
+
+## Features
+
+* Join and track a live virtual queue
+* Real-time position updates
+* Instant updates when your turn approaches
+* Admin controls for queue management
+* Add / remove / advance users in queue
+* Redis-backed fast queue operations
+* Real-time sync between admin, server, and clients
+* Fully containerized development setup
+
+---
+
+## Tech Stack
+
+* **Monorepo:** Turborepo
+* **Frontend:** React (Admin UI, Client UI)
+* **Backend:** Node.js / Express (Server)
+* **Database / Queue:** Redis
+* **Realtime Communication:** WebSockets / Socket.io
+* **Containerization:** Docker, Docker Compose
+
+---
+
+## Running Locally with Docker
+
+### 1. Clone the repository
+
+```bash id="clone"
+git clone https://github.com/giriexplores/virtualQueue.git
+cd virtualQueue
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+### 2. Start Redis + all services
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash id="docker-up"
+docker-compose up --build
 ```
 
-Without global `turbo`, use your package manager:
+This will start:
 
-```sh
-cd my-turborepo
-npx turbo build
-npm dlx turbo build
-npm exec turbo build
+* Redis instance (queue storage)
+* Server app
+* Admin UI
+* Client UI
+
+---
+
+## How It Works
+
+1. Client joins the queue via Client UI
+2. Server stores queue state in Redis
+3. Admin controls queue progression via Admin UI
+4. Server updates all clients in real-time
+5. Redis ensures fast and consistent queue operations
+
+---
+
+## Local Development (Without Docker)
+
+### 1. Start Redis locally
+
+Run Redis using Docker:
+
+```bash id="redis-local"
+docker run -p 6379:6379 redis
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+### 2. Install dependencies
 
-```sh
-turbo build --filter=docs
+```bash id="install"
+npm install
 ```
 
-Without global `turbo`:
+---
 
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
+### 3. Run all apps with Turborepo
+
+```bash id="dev"
+npm run dev
 ```
 
-### Develop
+---
 
-To develop all apps and packages, run the following command:
+## Key Design Decisions
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+* **Redis-based queue** for speed, simplicity, and atomic operations
+* **Monorepo architecture** to share logic and simplify deployments
+* **Docker-first setup** for consistent environments
+* **Separation of concerns** between admin, client, and server apps
 
-```sh
-cd my-turborepo
-turbo dev
-```
+---
 
-Without global `turbo`, use your package manager:
+## Use Cases
 
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
-```
+* Hospitals and clinics
+* Government service queues
+* Restaurants and reservations
+* Event entry systems
+* Token-based service counters
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Future Improvements
 
-```sh
-turbo dev --filter=web
-```
+* Authentication & role-based access control
+* SMS/email queue notifications
+* Multi-queue support per service
+* Persistent storage fallback (Redis → DB sync)
+* Analytics dashboard for queue performance
+* Mobile-first responsive redesign
 
-Without global `turbo`:
+---
 
-```sh
-npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
-```
+## Contributing
 
-### Remote Caching
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Submit a pull request
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+---
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Author
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+Built by [@giriexplores](https://github.com/giriexplores)
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
